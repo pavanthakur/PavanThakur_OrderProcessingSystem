@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IODataLabs.OrderProcessingSystem.Domain\IODataLabs.OrderProcessingSystem.Domain.csproj" />
+    <ProjectReference Include="..\IODataLabs.OrderProcessingSystem.Infrastructure\IODataLabs.OrderProcessingSystem.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

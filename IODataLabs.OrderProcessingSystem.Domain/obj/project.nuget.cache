@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "3kKug+gEDLw=",
+  "success": true,
+  "projectFilePath": "G:\\GIT\\PavanThakur_OrderProcessingSystem\\IODataLabs.OrderProcessingSystem.Domain\\IODataLabs.OrderProcessingSystem.Domain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Pavan\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.0\\microsoft.extensions.configuration.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\Pavan\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.0\\microsoft.extensions.dependencyinjection.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\Pavan\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.0\\microsoft.extensions.primitives.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
