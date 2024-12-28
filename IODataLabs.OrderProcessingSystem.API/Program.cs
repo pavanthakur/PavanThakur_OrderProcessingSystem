@@ -1,3 +1,4 @@
+using IODataLabs.OrderProcessingSystem.API.Middleware;
 using IODataLabs.OrderProcessingSystem.Application;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.OpenApi.Models;
@@ -51,6 +52,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<LoggingMiddleware>();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 

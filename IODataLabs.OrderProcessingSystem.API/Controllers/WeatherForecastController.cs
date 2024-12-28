@@ -24,13 +24,22 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
 
             _logger.LogInformation("Seri Log is Working");
 
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Enumerable.Range(1, 10).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost]
+        public void VerifyExceptionIsLogged()
+        {
+
+            _logger.LogInformation("Seri Log is Working");
+
+            throw new Exception("Test exception to verify ErrorHandlingMiddleware is working");
         }
     }
 
