@@ -20,7 +20,8 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OrderProcessingSystemDbConnection"));
             });
 
-            //// Auto migration setup
+            //Note : Comment this when running Add-Migration Command from Package Manager Console. Then uncomment after migration file is generated
+            // Auto migration setup
             var serviceProvider = builder.Services.BuildServiceProvider();
             var dbContext = serviceProvider.GetRequiredService<OrderProcessingSystemDbContext>();
             dbContext.Database.Migrate();
