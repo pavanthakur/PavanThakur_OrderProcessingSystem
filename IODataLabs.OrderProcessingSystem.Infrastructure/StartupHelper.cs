@@ -20,7 +20,10 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OrderProcessingSystemDbConnection"));
             });
 
-            //services.AddTransient<IUserRepository, UserRepository>();
+            // Auto migration setup
+            //var serviceProvider = builder.Services.BuildServiceProvider();
+            //var dbContext = serviceProvider.GetRequiredService<OrderProcessingSystemDbContext>();
+            //dbContext.Database.Migrate();
         }
     }
 }

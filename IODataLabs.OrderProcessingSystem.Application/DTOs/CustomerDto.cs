@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IODataLabs.OrderProcessingSystem.Infrastructure.Entities
+namespace IODataLabs.OrderProcessingSystem.Application.DTOs
 {
-    public class Customer
+    public class CustomerDto
     {
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-
-        public List<Order> Orders { get; set; }
     }
 
 }

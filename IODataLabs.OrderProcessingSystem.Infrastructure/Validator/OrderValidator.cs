@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace IODataLabs.OrderProcessingSystem.Infrastructure.Validator
 {
     using FluentValidation;
+    using IODataLabs.OrderProcessingSystem.Domain.Entities;
     using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
-    using IODataLabs.OrderProcessingSystem.Infrastructure.Entities;
     using Microsoft.EntityFrameworkCore;
 
     public class OrderValidator : AbstractValidator<Order>

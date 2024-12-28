@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.InjectApplicationDependencies();
 //builder.AddWebServices();
 
-//builder.Services.AddControllers();
+builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

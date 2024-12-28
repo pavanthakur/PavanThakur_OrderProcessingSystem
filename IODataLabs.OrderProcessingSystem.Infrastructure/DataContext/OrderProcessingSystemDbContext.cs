@@ -1,4 +1,4 @@
-﻿using IODataLabs.OrderProcessingSystem.Infrastructure.Entities;
+﻿using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 namespace IODataLabs.OrderProcessingSystem.Infrastructure.DataContext
 {
-    public class OrderProcessingSystemDbContext : DbContext
+    public class OrderProcessingSystemDbContext(DbContextOptions<OrderProcessingSystemDbContext> options) : DbContext(options)
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
-
-        public OrderProcessingSystemDbContext(DbContextOptions<OrderProcessingSystemDbContext> options) : base(options)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
