@@ -13,6 +13,9 @@ namespace IODataLabs.OrderProcessingSystem.Domain.Entities
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public int CustomerId { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalPrice { get; set; }
         public Customer Customer { get; set; }
         public List<OrderProduct> OrderProducts { get; set; }
         public bool IsFulfilled { get; set; } // Fulfilled or not
