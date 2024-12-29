@@ -1,4 +1,6 @@
-﻿using IODataLabs.OrderProcessingSystem.Application.Interfaces;
+﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
+using IODataLabs.OrderProcessingSystem.Application.Interfaces;
+using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,11 +32,11 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <response code="201">Create order</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderRequest request)
+        public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderRequest createOrderRequest)
         {
             try
             {
-                var order = await _orderService.CreateOrderAsync(request.CustomerId, request.ProductIds);
+                var order = await _orderService.CreateOrderAsync(createOrderRequest.CustomerId, createOrderRequest.ProductIds);
                 return CreatedAtAction(nameof(CreateOrder), new { id = order.OrderId }, order);
             }
             catch (FluentValidation.ValidationException ex)
@@ -55,7 +57,7 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <param name="id">Order id</param>
         /// <returns>Order</returns>
         [HttpGet("{id}", Name = nameof(GetOrderDetailsById))]
-        public async Task<ActionResult<Order>> GetOrderDetailsById(int id)
+        public async Task<ActionResult<OrderDto>> GetOrderDetailsById(int id)
         {
             try
             {
@@ -67,65 +69,6 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
                 return NotFound(ex.Message);
             }
         }
-
-        /// <summary>
-        /// Endpoint to update an order (e.g., change fulfillment status)
-        /// </summary>
-        /// <remarks>This is to update an existing order.</remarks>
-        /// <param name="id">Order id</param>
-        /// <param name="isFulfilled">isFulfilled</param>
-        /// <returns>Order</returns>
-        [HttpPut("{id}/UpdateOrder", Name = nameof(UpdateOrder))]
-        public async Task<ActionResult<Order>> UpdateOrder(int id, [FromBody] bool isFulfilled)
-        {
-            try
-            {
-                var updatedOrder = await _orderService.UpdateOrderAsync(id, isFulfilled);
-                return Ok(updatedOrder);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Endpoint to delete an existing order
-        /// </summary>
-        /// <remarks>This is to delete an existing order.</remarks>
-        /// <param name="id">Order id</param>
-        /// <returns>Deleted status</returns>
-        /// <response code="204">Return 204 No Content if deletion is successful</response>
-        [HttpDelete("{id}/DeleteOrder")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteOrder(int id)
-        {
-            try
-            {
-                await _orderService.DeleteOrderAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Request model for creating an order.
-    /// </summary>
-    public class CreateOrderRequest
-    {
-        /// <summary>
-        /// Gets or sets the customer ID.
-        /// </summary>
-        public int CustomerId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the list of product IDs.
-        /// </summary>
-        public required List<int> ProductIds { get; set; }
     }
 }
 

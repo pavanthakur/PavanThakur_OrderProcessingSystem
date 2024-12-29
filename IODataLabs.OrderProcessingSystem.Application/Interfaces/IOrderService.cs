@@ -1,4 +1,6 @@
-﻿using IODataLabs.OrderProcessingSystem.Domain.Entities;
+﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
+using IODataLabs.OrderProcessingSystem.Application.Request;
+using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +11,8 @@ namespace IODataLabs.OrderProcessingSystem.Application.Interfaces
 {
     public interface IOrderService
     {
-        Task<Order> CreateOrderAsync(int customerId, List<int> productIds);
-        Task DeleteOrderAsync(int orderId);
-        Task<Order> GetOrderDetailsAsync(int orderId);
-        Task<Order> UpdateOrderAsync(int orderId, bool isFulfilled);
+        Task<OrderDto> CreateOrderAsync(int customerId, List<int> productIds);
+        Task<OrderDto> GetOrderDetailsAsync(int orderId);
     }
 
 }

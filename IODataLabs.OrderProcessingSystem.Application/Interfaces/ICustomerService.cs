@@ -1,15 +1,14 @@
 ﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
+using IODataLabs.OrderProcessingSystem.Application.Request;
 
 namespace IODataLabs.OrderProcessingSystem.Application.Interfaces
 {
     public interface ICustomerService
     {
-        Task<CustomerDto> CreateCustomerAsync(CustomerDto customerDto);
+        Task<int> CreateCustomerAsync(CreateCustomerRequest customerDto);
         Task<CustomerDto> GetCustomerByIdAsync(int customerId);
-        Task DeleteCustomerAsync(int customerId);
         Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
         Task<CustomerDto> GetCustomerWithOrdersAsync(int customerId);
-        Task<CustomerDto> UpdateCustomerAsync(int customerId, CustomerDto updatedCustomer);
         void VerifyExceptionLoggedInService();
     }
 }

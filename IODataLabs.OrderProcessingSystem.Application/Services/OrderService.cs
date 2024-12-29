@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
+using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
@@ -16,16 +19,18 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
     {
         private readonly OrderProcessingSystemDbContext _context;
         private readonly IValidator<Order> _orderValidator;
+        private readonly IMapper _autoMapper;
 
 
-        public OrderService(OrderProcessingSystemDbContext context, IValidator<Order> orderValidator)
+        public OrderService(OrderProcessingSystemDbContext context, IValidator<Order> orderValidator, IMapper autoMapper)
         {
             _context = context;
             _orderValidator = orderValidator;
+            _autoMapper = autoMapper;
         }
 
         // Create a new order
-        public async Task<Order> CreateOrderAsync(int customerId, List<int> productIds)
+        public async Task<OrderDto> CreateOrderAsync(int customerId, List<int> productIds)
         {
             var customer = await _context.Customers.Include(c => c.Orders)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -49,8 +54,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 {
                     ProductId = p.ProductId,
                     Product = p,
-                    Quantity = 1  // Assuming quantity of 1 for simplicity; you can modify this to accept quantity
-                    //Price = p.Price
+                    Quantity = 1  // Assuming quantity of 1 for simplicity
                 }).ToList()
             };
 
@@ -58,15 +62,22 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             order.TotalPrice = order.OrderProducts.Sum(oi => oi.Quantity * oi.Price);
 
             // Validate the order using FluentValidation
-            await _orderValidator.ValidateAndThrowAsync(order);
+            ValidationResult validationResult = await _orderValidator.ValidateAsync(order);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return order;
+
+            // Map the order to OrderDto
+            var orderDto = _autoMapper.Map<OrderDto>(order);
+            return orderDto;
         }
 
         // Retrieve an order by ID, including the total price
-        public async Task<Order> GetOrderDetailsAsync(int orderId)
+        public async Task<OrderDto> GetOrderDetailsAsync(int orderId)
         {
             var order = await _context.Orders
                 .Include(o => o.OrderProducts)
@@ -76,32 +87,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             if (order == null)
                 throw new KeyNotFoundException($"Order with ID {orderId} not found.");
 
-            // Calculate the total price
-            order.TotalPrice = order.OrderProducts.Sum(oi => oi.Quantity * oi.Price);
-            return order;
-        }
-
-        // Update an order (for simplicity, we are just updating its fulfillment status here)
-        public async Task<Order> UpdateOrderAsync(int orderId, bool isFulfilled)
-        {
-            var order = await _context.Orders.FindAsync(orderId);
-            if (order == null)
-                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
-
-            order.IsFulfilled = isFulfilled;
-            await _context.SaveChangesAsync();
-            return order;
-        }
-
-        // Delete an order
-        public async Task DeleteOrderAsync(int orderId)
-        {
-            var order = await _context.Orders.FindAsync(orderId);
-            if (order == null)
-                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
-
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            return _autoMapper.Map<OrderDto>(order);
         }
     }
 }

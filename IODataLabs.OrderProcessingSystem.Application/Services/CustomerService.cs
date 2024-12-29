@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
+using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -63,51 +64,24 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         // Retrieve a specific customer with their orders
         public async Task<CustomerDto> GetCustomerWithOrdersAsync(int customerId)
         {
-            var customerDto = await _context.Customers
+            var customer = await _context.Customers
                 .Include(c => c.Orders)
-                .ThenInclude(o => o.OrderProducts)
-                .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
 
-            if (customerDto == null)
+            if (customer == null)
                 throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
-
-            return _autoMapper.Map<CustomerDto>(customerDto);
-        }
-
-        // Create a new customer
-        public async Task<CustomerDto> CreateCustomerAsync(CustomerDto customerDto)
-        {
-            var customer = _autoMapper.Map<Customer>(customerDto);
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
 
             return _autoMapper.Map<CustomerDto>(customer);
         }
 
-        // Update an existing customer
-        public async Task<CustomerDto> UpdateCustomerAsync(int customerId, CustomerDto updatedCustomerDto)
+        // Create a new customer
+        public async Task<int> CreateCustomerAsync(CreateCustomerRequest customerDto)
         {
-            var existingCustomer = await _context.Customers.FindAsync(customerId);
-            if (existingCustomer == null)
-                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
-
-            _autoMapper.Map(updatedCustomerDto, existingCustomer);
-            _context.Customers.Update(existingCustomer);
-            await _context.SaveChangesAsync();
-
-            return _autoMapper.Map<CustomerDto>(existingCustomer);
-        }
-
-        // Delete a customer
-        public async Task DeleteCustomerAsync(int customerId)
-        {
-            var customerDto = await _context.Customers.FindAsync(customerId);
-            if (customerDto == null)
-                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
-
-            _context.Customers.Remove(customerDto);
-            await _context.SaveChangesAsync();
+            var customer = _autoMapper.Map<CreateCustomerRequest, Customer>(customerDto);
+            _context.Customers.Add(customer);
+            if (await _context.SaveChangesAsync() > 0)
+                return customer.CustomerId;
+            return 0;
         }
     }
 }

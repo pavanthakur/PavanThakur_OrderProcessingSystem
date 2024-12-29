@@ -1,6 +1,8 @@
 ﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
+using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IODataLabs.OrderProcessingSystem.API.Controllers
@@ -78,64 +80,13 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <remarks>This is create a new customer</remarks>  
         /// <param name="customer">customer</param>
         /// <returns>Customer</returns>
-        [HttpPost("{Customer}/CreateCustomer")]
-        public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CustomerDto customer)
+        [HttpPost]
+        public async Task<ActionResult> CreateCustomer(CreateCustomerRequest customer)
         {
-            if (customer == null)
-            {
-                return BadRequest("Customer data is required.");
-            }
-
-            var createdCustomer = await _customerService.CreateCustomerAsync(customer);
-            return CreatedAtAction(nameof(CreateCustomer), new { id = createdCustomer.CustomerId }, createdCustomer);
-        }
-
-        /// <summary>
-        /// Endpoint to update an existing customer
-        /// </summary>
-        /// <remarks>This is to update an existing customer.</remarks>
-        /// <param name="id">Customer id</param>
-        /// <param name="customer">customer</param>
-        /// <returns>Customer</returns>
-        [HttpPut("{id}/UpdateCustomer")]
-        public async Task<ActionResult<CustomerDto>> UpdateCustomer(int id, [FromBody] CustomerDto customer)
-        {
-            if (customer == null)
-            {
-                return BadRequest("Customer data is required.");
-            }
-
-            try
-            {
-                var updatedCustomer = await _customerService.UpdateCustomerAsync(id, customer);
-                return Ok(updatedCustomer);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Endpoint to delete an existing customer
-        /// </summary>
-        /// <remarks>This is to delete an existing customer.</remarks>
-        /// <param name="id">Customer id</param>
-        /// <returns>Deleted status</returns>
-        /// <response code="204">Return 204 No Content if deletion is successful</response>
-        [HttpDelete("{id}/DeleteCustomer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteCustomer(int id)
-        {
-            try
-            {
-                await _customerService.DeleteCustomerAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            int customerId = await _customerService.CreateCustomerAsync(customer);
+            if (customerId > 0)
+                return CreatedAtAction(nameof(CreateCustomer), new { id = customerId });
+            return StatusCode(500);
         }
     }
 }

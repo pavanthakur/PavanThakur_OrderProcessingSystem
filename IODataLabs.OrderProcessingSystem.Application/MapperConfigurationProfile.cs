@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IODataLabs.OrderProcessingSystem.Application.DTO;
+using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 
 namespace IODataLabs.OrderProcessingSystem.Application
@@ -8,10 +9,11 @@ namespace IODataLabs.OrderProcessingSystem.Application
     {
         public MapperConfigurationProfile()
         {
-            CreateMap<Customer, CustomerDto>().ReverseMap(); ;
-            CreateMap<Product, ProductDto>().ReverseMap(); ;
-            CreateMap<Order, OrderDto>().ReverseMap(); ;
-            CreateMap<OrderProduct, OrderProductDto>().ReverseMap(); ;
+            CreateMap<CreateCustomerRequest, Customer>();
+            CreateMap<Customer, CustomerDto>().ForMember(dest => dest.OrderDtos, opt => opt.MapFrom(src => src.Orders));
+            CreateMap<Product, ProductDto>();
+            CreateMap<Order, OrderDto>();
+            CreateMap<OrderProduct, OrderProductDto>();
         }
     }
 }
