@@ -1,8 +1,9 @@
+using AutoMapper;
 using IODataLabs.OrderProcessingSystem.API.Middleware;
 using IODataLabs.OrderProcessingSystem.Application;
-using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
 builder.InjectApplicationDependencies();
-//builder.AddWebServices();
 
 builder.Services.AddControllers();
 
@@ -23,23 +23,33 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); // Required for generating Swagger API documentation
 builder.Services.AddSwaggerGen(options =>
 {
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
+        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
     // Optionally, you can customize the Swagger UI or API info
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "My API",
+        Title = "OrderProcessingSystem API",
         Version = "v1",
-        Description = "A sample API for Swagger demo",
+        Description = "OrderProcessingSystem API with Customer, Order endpoints",
     });
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
+var mappingConfig = new MapperConfiguration(mapperConfiguration =>
+{
+    mapperConfiguration.AddProfile(new MapperConfigurationProfile());
+});
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger(); // Enable Swagger
     app.UseSwaggerUI(options =>
     {
@@ -48,6 +58,12 @@ if (app.Environment.IsDevelopment())
     });
     app.MapOpenApi();
 }
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
 
 app.UseHttpsRedirection();
 

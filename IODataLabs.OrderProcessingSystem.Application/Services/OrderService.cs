@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
+using IODataLabs.OrderProcessingSystem.Application.Interfaces;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +12,11 @@ using System.Threading.Tasks;
 
 namespace IODataLabs.OrderProcessingSystem.Application.Services
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
         private readonly OrderProcessingSystemDbContext _context;
         private readonly IValidator<Order> _orderValidator;
+
 
         public OrderService(OrderProcessingSystemDbContext context, IValidator<Order> orderValidator)
         {

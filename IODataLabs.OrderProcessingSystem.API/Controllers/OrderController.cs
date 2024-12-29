@@ -1,28 +1,41 @@
-﻿using IODataLabs.OrderProcessingSystem.Application.Services;
+﻿using IODataLabs.OrderProcessingSystem.Application.Interfaces;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IODataLabs.OrderProcessingSystem.API.Controllers
 {
+    /// <summary>
+    /// Controller to manage order-related operations.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly OrderService _orderService;
+        private readonly IOrderService _orderService;
 
-        public OrderController(OrderService orderService)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderController"/> class.
+        /// </summary>
+        /// <param name="orderService">The order service.</param>
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
         }
 
-        // Endpoint to create a new order for a customer
+        /// <summary>
+        /// Endpoint to Create order for a customer
+        /// </summary>
+        /// <remarks>Create order.</remarks>  
+        /// <returns></returns>
+        /// <response code="201">Create order</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderRequest request)
         {
             try
             {
                 var order = await _orderService.CreateOrderAsync(request.CustomerId, request.ProductIds);
-                return CreatedAtAction(nameof(GetOrderDetails), new { id = order.OrderId }, order);
+                return CreatedAtAction(nameof(CreateOrder), new { id = order.OrderId }, order);
             }
             catch (FluentValidation.ValidationException ex)
             {
@@ -34,9 +47,15 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
             }
         }
 
-        // Endpoint to retrieve details for a specific order, including the total price
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrderDetails(int id)
+        /// <summary>
+        /// Endpoint to retrieve details for a specific order, including the total price
+        /// </summary>
+        /// <remarks>This is the first step to 
+        /// retrieve a specific Order</remarks>  
+        /// <param name="id">Order id</param>
+        /// <returns>Order</returns>
+        [HttpGet("{id}", Name = nameof(GetOrderDetailsById))]
+        public async Task<ActionResult<Order>> GetOrderDetailsById(int id)
         {
             try
             {
@@ -49,8 +68,14 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
             }
         }
 
-        // Endpoint to update an order (e.g., change fulfillment status)
-        [HttpPut("{id}")]
+        /// <summary>
+        /// Endpoint to update an order (e.g., change fulfillment status)
+        /// </summary>
+        /// <remarks>This is to update an existing order.</remarks>
+        /// <param name="id">Order id</param>
+        /// <param name="isFulfilled">isFulfilled</param>
+        /// <returns>Order</returns>
+        [HttpPut("{id}/UpdateOrder", Name = nameof(UpdateOrder))]
         public async Task<ActionResult<Order>> UpdateOrder(int id, [FromBody] bool isFulfilled)
         {
             try
@@ -64,8 +89,15 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
             }
         }
 
-        // Endpoint to delete an order
-        [HttpDelete("{id}")]
+        /// <summary>
+        /// Endpoint to delete an existing order
+        /// </summary>
+        /// <remarks>This is to delete an existing order.</remarks>
+        /// <param name="id">Order id</param>
+        /// <returns>Deleted status</returns>
+        /// <response code="204">Return 204 No Content if deletion is successful</response>
+        [HttpDelete("{id}/DeleteOrder")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             try
@@ -80,10 +112,20 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         }
     }
 
+    /// <summary>
+    /// Request model for creating an order.
+    /// </summary>
     public class CreateOrderRequest
     {
+        /// <summary>
+        /// Gets or sets the customer ID.
+        /// </summary>
         public int CustomerId { get; set; }
-        public List<int> ProductIds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of product IDs.
+        /// </summary>
+        public required List<int> ProductIds { get; set; }
     }
 }
 

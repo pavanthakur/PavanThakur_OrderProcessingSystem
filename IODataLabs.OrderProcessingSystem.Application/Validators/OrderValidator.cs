@@ -1,10 +1,5 @@
 ﻿using FluentValidation;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IODataLabs.OrderProcessingSystem.Application.Validators
 {

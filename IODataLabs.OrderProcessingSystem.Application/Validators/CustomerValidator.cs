@@ -1,10 +1,5 @@
 ﻿using FluentValidation;
-using IODataLabs.OrderProcessingSystem.Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using IODataLabs.OrderProcessingSystem.Application.DTO;
 
 namespace IODataLabs.OrderProcessingSystem.Application.Validators
 {

@@ -1,4 +1,5 @@
 ﻿using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
+using IODataLabs.OrderProcessingSystem.Infrastructure.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +23,12 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure
 
             //Note : Comment this when running Add-Migration Command from Package Manager Console. Then uncomment after migration file is generated
             // Auto migration setup
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var dbContext = serviceProvider.GetRequiredService<OrderProcessingSystemDbContext>();
-            dbContext.Database.Migrate();
+            using (var serviceProvider = builder.Services.BuildServiceProvider())
+            {
+                var dbContext = serviceProvider.GetRequiredService<OrderProcessingSystemDbContext>();
+                dbContext.Database.Migrate();
+                DbInitializer.Initialize(dbContext);
+            }
         }
     }
 }
