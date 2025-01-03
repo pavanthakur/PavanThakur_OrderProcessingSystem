@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IODataLabs.OrderProcessingSystem.Application.Request
+namespace IODataLabs.OrderProcessingSystem.Application.DTO
 {
-    public class CreateCustomerRequest
+    public class CreateCustomerRequestDto
     {
         [Required]
         public string Name { get; set; }

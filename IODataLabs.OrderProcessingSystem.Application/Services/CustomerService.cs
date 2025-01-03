@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
-using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -75,9 +74,9 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         }
 
         // Create a new customer
-        public async Task<int> CreateCustomerAsync(CreateCustomerRequest customerDto)
+        public async Task<int> CreateCustomerAsync(CreateCustomerRequestDto customerRequestDto)
         {
-            var customer = _autoMapper.Map<CreateCustomerRequest, Customer>(customerDto);
+            var customer = _autoMapper.Map<CreateCustomerRequestDto, Customer>(customerRequestDto);
             _context.Customers.Add(customer);
             if (await _context.SaveChangesAsync() > 0)
                 return customer.CustomerId;

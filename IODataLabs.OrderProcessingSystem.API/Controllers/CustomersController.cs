@@ -1,6 +1,5 @@
 ﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
-using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -78,12 +77,12 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// Endpoint to create a new customer
         /// </summary>
         /// <remarks>This is create a new customer</remarks>  
-        /// <param name="customer">customer</param>
+        /// <param name="customerRequestDto">customer</param>
         /// <returns>Customer</returns>
         [HttpPost]
-        public async Task<ActionResult> CreateCustomer(CreateCustomerRequest customer)
+        public async Task<ActionResult> CreateCustomer(CreateCustomerRequestDto customerRequestDto)
         {
-            int customerId = await _customerService.CreateCustomerAsync(customer);
+            int customerId = await _customerService.CreateCustomerAsync(customerRequestDto);
             if (customerId > 0)
                 return CreatedAtAction(nameof(CreateCustomer), new { id = customerId });
             return StatusCode(500);

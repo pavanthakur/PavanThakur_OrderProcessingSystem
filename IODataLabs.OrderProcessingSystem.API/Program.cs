@@ -50,12 +50,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger(); // Enable Swagger
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
-        options.RoutePrefix = string.Empty; // Optional: Set Swagger UI at the root
-    });
     app.MapOpenApi();
 }
 else
@@ -63,6 +57,13 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseSwagger(); // Enable Swagger
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
+    options.RoutePrefix = string.Empty; // Optional: Set Swagger UI at the root
+});
 
 
 app.UseHttpsRedirection();

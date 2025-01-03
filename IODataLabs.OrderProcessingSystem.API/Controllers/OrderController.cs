@@ -1,6 +1,5 @@
 ﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
-using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,11 +31,11 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <response code="201">Create order</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderRequest createOrderRequest)
+        public async Task<ActionResult<OrderDto>> CreateOrder(CreateOrderRequestDto createOrderRequestDto)
         {
             try
             {
-                var order = await _orderService.CreateOrderAsync(createOrderRequest.CustomerId, createOrderRequest.ProductIds);
+                var order = await _orderService.CreateOrderAsync(createOrderRequestDto.CustomerId, createOrderRequestDto.ProductIds);
                 return CreatedAtAction(nameof(CreateOrder), new { id = order.OrderId }, order);
             }
             catch (FluentValidation.ValidationException ex)

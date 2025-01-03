@@ -1,16 +1,15 @@
-﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IODataLabs.OrderProcessingSystem.Application.Request
+namespace IODataLabs.OrderProcessingSystem.Application.DTO
 {
     /// <summary>
     /// Request model for creating an order.
     /// </summary>
-    public class CreateOrderRequest
+    public class CreateOrderRequestDto
     {
         /// <summary>
         /// Gets or sets the customer ID.

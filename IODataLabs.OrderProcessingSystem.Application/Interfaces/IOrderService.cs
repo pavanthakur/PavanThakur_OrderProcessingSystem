@@ -1,5 +1,4 @@
 ﻿using IODataLabs.OrderProcessingSystem.Application.DTO;
-using IODataLabs.OrderProcessingSystem.Application.Request;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
