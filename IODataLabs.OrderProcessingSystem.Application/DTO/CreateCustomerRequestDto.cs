@@ -10,11 +10,11 @@ namespace IODataLabs.OrderProcessingSystem.Application.DTO
     public class CreateCustomerRequestDto
     {
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
 
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
     }
 }

@@ -34,7 +34,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         }
 
         // Get Customer by Id
-        public async Task<CustomerDto> GetCustomerByIdAsync(int id)
+        public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)

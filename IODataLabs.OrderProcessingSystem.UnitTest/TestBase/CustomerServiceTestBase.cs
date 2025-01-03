@@ -22,7 +22,6 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
     public class CustomerServiceTestBase : OrderProcessingSystemTestBase<CustomerService>
     {
         protected readonly ICustomerService _customerService;
-        protected readonly ILogger<CustomerService> _logger;
 
         public CustomerServiceTestBase()
         {

@@ -38,7 +38,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
 
             // Validate customer order history: Check if there is an unfulfilled order
-            if (customer.Orders.Any(o => !o.IsFulfilled))
+            if (customer.Orders != null && customer.Orders.Any(o => !o.IsFulfilled))
                 throw new ValidationException("Customer cannot place a new order until their previous order is fulfilled.");
 
             // Retrieve the products and check if they exist

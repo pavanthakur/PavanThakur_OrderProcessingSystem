@@ -26,7 +26,7 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.ControllersTest
         public async Task GetAllCustomers_ReturnsOkResult_WithListOfCustomers()
         {
             // Arrange
-            var customers = new List<CustomerDto> { new CustomerDto { CustomerId = 1, Name = "John Doe" } };
+            var customers = new List<CustomerDto> { new CustomerDto { CustomerId = 1, Name = "John Doe", Email = "test@test1.com" } };
             _mockCustomerService.Setup(service => service.GetAllCustomersAsync()).ReturnsAsync(customers);
 
             // Act
@@ -56,7 +56,7 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.ControllersTest
         public async Task GetCustomerById_ReturnsOkResult_WithCustomer()
         {
             // Arrange
-            var customer = new CustomerDto { CustomerId = 1, Name = "John Doe" };
+            var customer = new CustomerDto { CustomerId = 1, Name = "John Doe", Email = "test@test1.com" };
             _mockCustomerService.Setup(service => service.GetCustomerWithOrdersAsync(1)).ReturnsAsync(customer);
 
             // Act
@@ -86,7 +86,7 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.ControllersTest
         public async Task CreateCustomer_ReturnsCreatedAtActionResult()
         {
             // Arrange
-            var createCustomerRequest = new CreateCustomerRequestDto { Name = "John Doe" };
+            var createCustomerRequest = new CreateCustomerRequestDto { Name = "John Doe", Email = "test@test1.com" };
             _mockCustomerService.Setup(service => service.CreateCustomerAsync(createCustomerRequest)).ReturnsAsync(1);
 
             // Act
@@ -101,7 +101,7 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.ControllersTest
         public async Task CreateCustomer_ReturnsStatusCode500_WhenCustomerCreationFails()
         {
             // Arrange
-            var createCustomerRequest = new CreateCustomerRequestDto { Name = "John Doe" };
+            var createCustomerRequest = new CreateCustomerRequestDto { Name = "John Doe", Email = "test@test1.com" };
             _mockCustomerService.Setup(service => service.CreateCustomerAsync(createCustomerRequest)).ReturnsAsync(0);
 
             // Act

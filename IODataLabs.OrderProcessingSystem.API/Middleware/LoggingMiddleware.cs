@@ -2,16 +2,30 @@
 
 namespace IODataLabs.OrderProcessingSystem.API.Middleware
 {
+    /// <summary>
+    /// Middleware for logging HTTP requests and responses.
+    /// </summary>
     public class LoggingMiddleware
     {
         private readonly ILogger<LoggingMiddleware> _logger;
         private readonly RequestDelegate _next;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoggingMiddleware"/> class.
+        /// </summary>
+        /// <param name="requestDelegate">The next middleware in the pipeline.</param>
+        /// <param name="logger">The logger instance.</param>
         public LoggingMiddleware(RequestDelegate requestDelegate, ILogger<LoggingMiddleware> logger)
         {
-            _next = requestDelegate;
             _logger = logger;
+            _next = requestDelegate;
         }
+
+        /// <summary>
+        /// Invokes the middleware to log the request and response.
+        /// </summary>
+        /// <param name="context">The HTTP context.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
             var request = context.Request;
@@ -39,6 +53,12 @@ namespace IODataLabs.OrderProcessingSystem.API.Middleware
                 await memoryStream.CopyToAsync(originalBodyStream);
             }
         }
+
+        /// <summary>
+        /// Reads the request body as a string.
+        /// </summary>
+        /// <param name="request">The HTTP request.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the request body as a string.</returns>
         private async Task<string> GetRequestBodyAsync(HttpRequest request)
         {
             if (request.ContentLength > 0 && request.Body.CanSeek)

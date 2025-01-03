@@ -29,12 +29,12 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
 
         public object Execute(Expression expression)
         {
-            return _inner.Execute(expression);
+            return _inner.Execute(expression) ?? throw new InvalidOperationException("Execution result cannot be null.");
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
-            return _inner.Execute<TResult>(expression);
+            return _inner.Execute<TResult>(expression) ?? throw new InvalidOperationException("Execution result cannot be null.");
         }
 
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
