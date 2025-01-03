@@ -30,12 +30,8 @@ This repository contains the implementation of Domain Driven Design and Clean Ar
 9. LoggingMiddleware 
 10. ErrorHandlingMiddleware
 11. Fluent Assertions
+12. xUnit
+13. Moq
 
 # TODO
 Docker
-xUnit
-Moq
-
-
-
- 
