@@ -29,12 +29,12 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
 
         public object Execute(Expression expression)
         {
-            return _inner.Execute(expression) ?? throw new InvalidOperationException("Execution result cannot be null.");
+            return _inner.Execute(expression);
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
-            return _inner.Execute<TResult>(expression) ?? throw new InvalidOperationException("Execution result cannot be null.");
+            return _inner.Execute<TResult>(expression);
         }
 
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
@@ -52,12 +52,6 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
                     types: new[] { typeof(Expression) })
                 ?.MakeGenericMethod(expectedResultType)
                 .Invoke(this, new[] { expression });
-
-            if (executionResult == null)
-            {
-                throw new InvalidOperationException("Execution result cannot be null.");
-            }
-
             return (TResult)(typeof(Task).GetMethod(nameof(Task.FromResult))?
                 .MakeGenericMethod(expectedResultType)
                 .Invoke(null, new[] { executionResult }) ?? throw new InvalidOperationException("Task.FromResult invocation failed."));

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
         protected Mock<DbSet<Order>> MockOrderDbSet { get; private set; }
         protected Mock<DbSet<Product>> MockProductDbSet { get; private set; }
         protected Mock<ILogger<T1>> MockLogger { get; private set; }
+
+        protected readonly Mock<IValidator<Order>> MockOrderValidator;
         protected Mock<IMapper> MockMapper { get; private set; }
 
         public OrderProcessingSystemTestBase()
@@ -28,6 +31,9 @@ namespace IODataLabs.OrderProcessingSystem.UnitTest.TestBase
             MockCustomerDbSet = new Mock<DbSet<Customer>>();
             MockOrderDbSet = new Mock<DbSet<Order>>();
             MockProductDbSet = new Mock<DbSet<Product>>();
+
+            // Initialize Mock Validator
+            MockOrderValidator = new Mock<IValidator<Order>>();
 
             // Set up the mock DbContext to return the DbSets
             MockDbContext.Setup(c => c.Customers).Returns(MockCustomerDbSet.Object);
