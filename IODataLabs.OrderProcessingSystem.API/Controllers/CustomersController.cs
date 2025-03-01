@@ -31,7 +31,6 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <returns></returns>
         /// <response code="200">Returns all customers</response>
         [HttpGet("GetAllCustomers", Name = nameof(GetAllCustomers))]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
         {
             var customers = await _customerService.GetAllCustomersAsync();
@@ -45,7 +44,6 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// <returns>BadRequest</returns>
         /// <response code="500">Internal server error</response>
         [HttpGet("VerifyExceptionLoggedInService", Name = nameof(VerifyExceptionLoggedInService))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult VerifyExceptionLoggedInService()
         {
             _customerService.VerifyExceptionLoggedInService();
@@ -65,6 +63,10 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
             try
             {
                 var customer = await _customerService.GetCustomerWithOrdersAsync(id);
+                if (customer == null)
+                {
+                    return NotFound("Customer not found");
+                }
                 return Ok(customer);
             }
             catch (KeyNotFoundException ex)
@@ -84,8 +86,54 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         {
             int customerId = await _customerService.CreateCustomerAsync(customerRequestDto);
             if (customerId > 0)
-                return CreatedAtAction(nameof(CreateCustomer), new { id = customerId });
+                return CreatedAtAction(nameof(CreateCustomer), new { id = customerId }, "Customer created successfully");
             return StatusCode(500);
+        }
+
+        /// <summary>
+        /// Endpoint to update an existing customer
+        /// </summary>
+        /// <remarks>This is to update an existing customer</remarks>  
+        /// <param name="id">Customer id</param>
+        /// <param name="customerRequestDto">customer</param>
+        /// <returns>Customer</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCustomer(int id, UpdateCustomerRequestDto customerRequestDto)
+        {
+            try
+            {
+                await _customerService.UpdateCustomerAsync(id, customerRequestDto);
+                int customerId = await _customerService.UpdateCustomerAsync(id, customerRequestDto);
+                if (customerId == 0)
+                {
+                    return StatusCode(500, "Error updating customer");
+                }
+                return Ok(new { id, message = "Customer updated successfully" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Endpoint to delete an existing customer
+        /// </summary>
+        /// <remarks>This is to delete an existing customer</remarks>  
+        /// <param name="id">Customer id</param>
+        /// <returns>Customer</returns>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCustomer(int id)
+        {
+            try
+            {
+                await _customerService.DeleteCustomerAsync(id);
+                return Ok(new { id, message = "Customer deleted successfully" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

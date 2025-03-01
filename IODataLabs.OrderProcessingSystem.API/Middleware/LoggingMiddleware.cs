@@ -28,29 +28,36 @@ namespace IODataLabs.OrderProcessingSystem.API.Middleware
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            var request = context.Request;
-            var requestBody = await GetRequestBodyAsync(request);
-            _logger.LogInformation(@"Request: {Method} {Url} {QueryString} Body: {RequestBody}",
-                request.Method,
-                request.Path,
-                request.QueryString,
-                requestBody);
-            var originalBodyStream = context.Response.Body;
-            using (var memoryStream = new MemoryStream())
+            try
             {
-                context.Response.Body = memoryStream;
+                var request = context.Request;
+                var requestBody = await GetRequestBodyAsync(request);
+                _logger.LogInformation(@"Request: {Method} {Url} {QueryString} Body: {RequestBody}",
+                    request.Method,
+                    request.Path,
+                    request.QueryString,
+                    requestBody);
 
-                await _next(context);
+                var originalBodyStream = context.Response.Body;
+                using (var memoryStream = new MemoryStream())
+                {
+                    context.Response.Body = memoryStream;
 
-                context.Response.Body = originalBodyStream;
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+                    await _next(context);
+                    context.Response.Body.Seek(0, SeekOrigin.Begin);
 
-                _logger.LogInformation("Response: {StatusCode} Body: {ResponseBody}",
-                    context.Response.StatusCode,
-                    responseBody);
-
-                await memoryStream.CopyToAsync(originalBodyStream);
+                    var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+                    _logger.LogInformation("Response: {StatusCode} Body: {ResponseBody}",
+                        context.Response.StatusCode,
+                        responseBody);
+                    context.Response.Body.Seek(0, SeekOrigin.Begin);
+                    await memoryStream.CopyToAsync(originalBodyStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while logging the request/response.");
+                throw; // Re-throw the exception after logging
             }
         }
 

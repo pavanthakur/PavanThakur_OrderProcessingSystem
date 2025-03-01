@@ -9,5 +9,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Interfaces
         Task<IEnumerable<CustomerDto>> GetAllCustomersAsync();
         Task<CustomerDto> GetCustomerWithOrdersAsync(int customerId);
         void VerifyExceptionLoggedInService();
+        Task<int> UpdateCustomerAsync(int customerId, UpdateCustomerRequestDto customerDto);
+        Task DeleteCustomerAsync(int customerId);
     }
 }

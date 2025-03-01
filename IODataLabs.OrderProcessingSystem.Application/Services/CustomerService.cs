@@ -82,5 +82,34 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 return customer.CustomerId;
             return 0;
         }
+
+        // Update an existing customer
+        public async Task<int> UpdateCustomerAsync(int customerId, UpdateCustomerRequestDto customerDto)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            if (customer == null)
+            {
+                return 0;
+               //throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
+            }
+
+            _autoMapper.Map(customerDto, customer);
+            _context.Customers.Update(customer);
+            await _context.SaveChangesAsync();
+            return customer.CustomerId;
+        }
+
+        // Delete a customer
+        public async Task DeleteCustomerAsync(int customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            if (customer == null)
+            {
+                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
+            }
+
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+        }
     }
 }

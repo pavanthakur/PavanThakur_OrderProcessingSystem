@@ -7,24 +7,25 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
-
-builder.InjectApplicationDependencies();
-
+builder.InjectApplicationDependencies(); 
 builder.Services.AddControllers();
 
 // Register Swagger services
-builder.Services.AddEndpointsApiExplorer(); // Required for generating Swagger API documentation
+builder.Services.AddEndpointsApiExplorer();// Required for generating Swagger API documentation
 builder.Services.AddSwaggerGen(options =>
 {
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
-        $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+    else
+    {
+        // Log a warning or handle the missing file scenario
+        Console.WriteLine($"Warning: XML comments file '{xmlPath}' not found.");
+    }
 
     // Optionally, you can customize the Swagger UI or API info
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -35,9 +36,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var mappingConfig = new MapperConfiguration(mapperConfiguration =>
 {
     mapperConfiguration.AddProfile(new MapperConfigurationProfile());
@@ -45,26 +43,27 @@ var mappingConfig = new MapperConfiguration(mapperConfiguration =>
 IMapper mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+// Add services to the container.
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
-    app.MapOpenApi();
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
-app.UseSwagger(); // Enable Swagger
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
-    options.RoutePrefix = string.Empty; // Optional: Set Swagger UI at the root
-});
-
 
 app.UseHttpsRedirection();
 
