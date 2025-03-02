@@ -70,8 +70,8 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
                 return BadRequest(validationErrors.ToString());
             }
 
-            var result = await _customerService.GetAllCustomersByNameAsync(name, pageNumber, pageSize);
-            return Ok(result.Customers);
+            var customers = await _customerService.GetAllCustomersByNameAsync(name, pageNumber, pageSize);
+            return Ok(customers);
         }
 
         /// <summary>

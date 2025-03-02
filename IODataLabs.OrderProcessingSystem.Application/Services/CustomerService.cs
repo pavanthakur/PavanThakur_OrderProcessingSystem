@@ -33,7 +33,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             return _autoMapper.Map<IEnumerable<CustomerDto>>(customers);
         }
 
-        public async Task<(IEnumerable<CustomerDto> Customers, int TotalCount)> GetAllCustomersByNameAsync(string name, int pageNumber, int pageSize)
+        public async Task<IEnumerable<CustomerDto>> GetAllCustomersByNameAsync(string name, int pageNumber, int pageSize)
         {
             var customers = await _context.Customers.ToListAsync();
             var query = customers.AsQueryable();
@@ -46,7 +46,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             var totalCount = query.Count();
             var filteredCustomers = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
-            return (_autoMapper.Map<IEnumerable<CustomerDto>>(filteredCustomers), totalCount);
+            return _autoMapper.Map<IEnumerable<CustomerDto>>(filteredCustomers);
         }
 
         // Get Customer by Id
@@ -106,7 +106,6 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             if (customer == null)
             {
                 return 0;
-               //throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
             }
 
             _autoMapper.Map(customerDto, customer);
