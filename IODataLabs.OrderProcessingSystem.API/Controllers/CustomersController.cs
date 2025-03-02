@@ -3,6 +3,7 @@ using IODataLabs.OrderProcessingSystem.Application.Interfaces;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace IODataLabs.OrderProcessingSystem.API.Controllers
 {
@@ -35,6 +36,42 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         {
             var customers = await _customerService.GetAllCustomersAsync();
             return Ok(customers);
+        }
+
+        /// <summary>
+        /// Endpoint to search customers by name with pagination.
+        /// </summary>
+        /// <param name="name">Customer name to search for.</param>
+        /// <param name="pageNumber">Page number for pagination.</param>
+        /// <param name="pageSize">Page size for pagination.</param>
+        /// <returns>A list of customers matching the search criteria.</returns>
+        [HttpGet("GetAllCustomersByName")]
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomersByName(string name, int pageNumber = 1, int pageSize = 10)
+        {
+            var validationErrors = new StringBuilder();
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                validationErrors.AppendLine("Name cannot be empty.");
+            }
+
+            if (pageNumber <= 0)
+            {
+                validationErrors.AppendLine("Page number must be greater than zero.");
+            }
+
+            if (pageSize <= 0)
+            {
+                validationErrors.AppendLine("Page size must be greater than zero.");
+            }
+
+            if (validationErrors.Length > 0)
+            {
+                return BadRequest(validationErrors.ToString());
+            }
+
+            var result = await _customerService.GetAllCustomersByNameAsync(name, pageNumber, pageSize);
+            return Ok(result.Customers);
         }
 
         /// <summary>

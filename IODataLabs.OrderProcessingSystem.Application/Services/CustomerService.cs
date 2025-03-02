@@ -33,6 +33,22 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
             return _autoMapper.Map<IEnumerable<CustomerDto>>(customers);
         }
 
+        public async Task<(IEnumerable<CustomerDto> Customers, int TotalCount)> GetAllCustomersByNameAsync(string name, int pageNumber, int pageSize)
+        {
+            var customers = await _context.Customers.ToListAsync();
+            var query = customers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var totalCount = query.Count();
+            var filteredCustomers = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return (_autoMapper.Map<IEnumerable<CustomerDto>>(filteredCustomers), totalCount);
+        }
+
         // Get Customer by Id
         public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
         {

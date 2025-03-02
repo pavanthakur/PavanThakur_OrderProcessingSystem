@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bogus;
 
 namespace IODataLabs.OrderProcessingSystem.Infrastructure.SeedData
 {
@@ -20,45 +21,65 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure.SeedData
                 return; // DB has been seeded
             }
 
-            // Seed Customers
-            var customers = new List<Customer>
-            {
-                new Customer { Name = "John Doe", Email = "john.doe@example.com" },
-                new Customer { Name = "Jane Smith", Email = "jane.smith@example.com" }
-            };
-            context.Customers.AddRange(customers);
-            context.SaveChanges();
-
-            // Seed Products
-            var products = new List<Product>
-            {
-                new Product { Name = "Laptop", Price = 500.00m },
-                new Product { Name = "Phone", Price = 300.00m },
-                new Product { Name = "Headphones", Price = 200.00m }
-            };
-            context.Products.AddRange(products);
-            context.SaveChanges();
-
-            // Seed Orders
-            var orders = new List<Order>
-            {
-                new Order { OrderDate = DateTime.Now, CustomerId = customers[0].CustomerId, TotalPrice =  products.Sum(product => product.Price)},
-                new Order { OrderDate = DateTime.Now, CustomerId = customers[1].CustomerId }
-            };
-            context.Orders.AddRange(orders);
-            context.SaveChanges();
-
-            // Seed OrderProducts (Many-to-many relationship)
-            var orderProducts = new List<OrderProduct>
-            {
-                new OrderProduct { OrderId = orders[0].OrderId, ProductId = products[0].ProductId, Quantity = 1 },
-                new OrderProduct { OrderId = orders[0].OrderId, ProductId = products[1].ProductId, Quantity = 2 },
-                new OrderProduct { OrderId = orders[1].OrderId, ProductId = products[2].ProductId, Quantity = 1 }
-            };
-            context.OrderProducts.AddRange(orderProducts);
-            context.SaveChanges();
+            SeedCustomers(context);
+            SeedProducts(context);
+            SeedOrders(context);
+            SeedOrderProducts(context);
 
             UpdateOrderTotalPrices(context);
+        }
+
+        private static void SeedCustomers(OrderProcessingSystemDbContext context)
+        {
+            // The rest of the file remains unchanged
+            var faker = new Faker<Customer>()
+                .RuleFor(c => c.Name, f => f.Name.FullName())
+                .RuleFor(c => c.Email, f => f.Internet.Email());
+
+            var customers = faker.Generate(120);
+            context.Customers.AddRange(customers);
+            context.SaveChanges();
+        }
+
+        private static void SeedProducts(OrderProcessingSystemDbContext context)
+        {
+            var products = new List<Product>
+                {
+                    new Product { Name = "Laptop", Price = 500.00m },
+                    new Product { Name = "Phone", Price = 300.00m },
+                    new Product { Name = "Headphones", Price = 200.00m }
+                };
+            context.Products.AddRange(products);
+            context.SaveChanges();
+        }
+
+        private static void SeedOrders(OrderProcessingSystemDbContext context)
+        {
+            var customers = context.Customers.ToList();
+            var products = context.Products.ToList();
+
+            var orders = new List<Order>
+                {
+                    new Order { OrderDate = DateTime.Now, CustomerId = customers[0].CustomerId, TotalPrice = products.Sum(product => product.Price) },
+                    new Order { OrderDate = DateTime.Now, CustomerId = customers[1].CustomerId }
+                };
+            context.Orders.AddRange(orders);
+            context.SaveChanges();
+        }
+
+        private static void SeedOrderProducts(OrderProcessingSystemDbContext context)
+        {
+            var orders = context.Orders.ToList();
+            var products = context.Products.ToList();
+
+            var orderProducts = new List<OrderProduct>
+                {
+                    new OrderProduct { OrderId = orders[0].OrderId, ProductId = products[0].ProductId, Quantity = 1 },
+                    new OrderProduct { OrderId = orders[0].OrderId, ProductId = products[1].ProductId, Quantity = 2 },
+                    new OrderProduct { OrderId = orders[1].OrderId, ProductId = products[2].ProductId, Quantity = 1 }
+                };
+            context.OrderProducts.AddRange(orderProducts);
+            context.SaveChanges();
         }
 
         private static void UpdateOrderTotalPrices(OrderProcessingSystemDbContext context)

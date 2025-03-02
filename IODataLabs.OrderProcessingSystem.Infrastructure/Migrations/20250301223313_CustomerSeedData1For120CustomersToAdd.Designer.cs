@@ -4,6 +4,7 @@ using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IODataLabs.OrderProcessingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderProcessingSystemDbContext))]
-    partial class OrderProcessingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250301223313_CustomerSeedData3For120CustomersToAdd")]
+    partial class CustomerSeedData3For120CustomersToAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
