@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace IODataLabs.OrderProcessingSystem.Application.DTO
+{
+    public class CustomerWithCardPaymentRequestDto
+    {
+        // Customer Info
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+
+        // Card Info
+        public string CardNumber { get; set; } = string.Empty;
+        public string ExpirationYear { get; set; } = string.Empty;
+        public string ExpirationMonth { get; set; } = string.Empty;
+        public string Cvv2 { get; set; } = string.Empty;
+
+        // Payment Info
+        public string OrderId { get; set; } = string.Empty;
+    }
+}

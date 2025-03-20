@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IODataLabs.OpenPayAdapter\IODataLabs.OpenPayAdapter.csproj" />
     <ProjectReference Include="..\IODataLabs.OrderProcessingSystem.Domain\IODataLabs.OrderProcessingSystem.Domain.csproj" />
     <ProjectReference Include="..\IODataLabs.OrderProcessingSystem.Infrastructure\IODataLabs.OrderProcessingSystem.Infrastructure.csproj" />
   </ItemGroup>
