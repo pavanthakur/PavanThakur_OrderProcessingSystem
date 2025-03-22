@@ -23,6 +23,10 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure
 
             //Note : Comment this when running Add-Migration Command from Package Manager Console. Then uncomment after migration file is generated
             // Auto migration setup
+            //Step1: Comment below code
+            //Step2: Add-Migration AddOpenpayCustomerIdColumnToCustomer
+            //Step3: Update-Database
+            //Step4: Uncomment below code
             using (var serviceProvider = builder.Services.BuildServiceProvider())
             {
                 var dbContext = serviceProvider.GetRequiredService<OrderProcessingSystemDbContext>();

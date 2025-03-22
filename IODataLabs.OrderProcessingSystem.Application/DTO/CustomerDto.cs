@@ -7,6 +7,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.DTO
         public int CustomerId { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
+        public string? OpenpayCustomerId { get; set; }
         public List<OrderDto> OrderDtos { get; set; } = new List<OrderDto>();
     }
 }

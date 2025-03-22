@@ -1,9 +1,13 @@
-﻿using IODataLabs.OpenPayAdapter;
+﻿using AutoMapper;
+using IODataLabs.OpenPayAdapter;
 using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;
 using IODataLabs.OrderProcessingSystem.Domain.Entities;
+using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Openpay.Entities;
 using Openpay.Entities.Request;
 
 namespace IODataLabs.OrderProcessingSystem.Application.Services
@@ -15,11 +19,15 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         private readonly ILogger<OpenPayService> _logger;
         private readonly string _redirectUrl;
         private readonly string _deviceSessionId;
+        private readonly OrderProcessingSystemDbContext _context;
+        private readonly IMapper _mapper;
 
         public OpenPayService(
             IOpenPayAdapterService openPayAdapterService,
             IConfiguration configuration,
-            ILogger<OpenPayService> logger)
+            ILogger<OpenPayService> logger,
+            OrderProcessingSystemDbContext context,
+            IMapper mapper)
         {
             _openPayAdapterService = openPayAdapterService;
             _logger = logger;
@@ -27,6 +35,8 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 ?? throw new InvalidOperationException("DeviceSessionId is not configured");
             _redirectUrl = configuration["OpenPay:RedirectUrl"]
                 ?? throw new InvalidOperationException("RedirectUrl is not configured");
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Payment> ProcessPaymentAsync(CustomerWithCardPaymentRequestDto request)
@@ -36,14 +46,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 _logger.LogInformation("Starting combined customer, card, and payment process");
 
                 // Create customer
-                var customer = await _openPayAdapterService.CreateCustomerAsync(new Openpay.Entities.Customer
-                {
-                    Name = request.Name,
-                    Email = request.Email,
-                    RequiresAccount = false
-                });
-
-                _logger.LogInformation("Customer created with ID: {CustomerId}", customer.Id);
+                var customer = await CreateCustomerAsync(request); 
 
                 // Create card
                 var card = new Openpay.Entities.Card
@@ -58,7 +61,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
 
                 var createdCard = await _openPayAdapterService.CreateCardTokenAsync(card);
 
-                _logger.LogInformation("Card created with ID: {CustomerId}", createdCard.Id);
+                _logger.LogInformation("Card created with ID: {CardId}", createdCard.Id);
 
                 // Create charge request
                 var chargeRequest = new ChargeRequest
@@ -96,6 +99,43 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 _logger.LogError(ex, "Error in combined payment process: {Message}", ex.Message);
                 throw;
             }
+        }
+
+        public async Task<Openpay.Entities.Customer> CreateCustomerAsync(CustomerWithCardPaymentRequestDto request)
+        {
+            var existingCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Name == request.Name && c.Email == request.Email);
+
+            if (existingCustomer != null)
+            {
+                _logger.LogInformation("Customer created with ID: {CustomerId}", existingCustomer.OpenpayCustomerId);
+
+                return new Openpay.Entities.Customer
+                {
+                    Name = existingCustomer.Name,
+                    Email = existingCustomer.Email,
+                    RequiresAccount = false,
+                    Id = existingCustomer.OpenpayCustomerId 
+                };
+            }
+
+            // Create customer in OpenPay
+            var openpayCustomer = await _openPayAdapterService.CreateCustomerAsync(new Openpay.Entities.Customer
+            {
+                Name = request.Name,
+                Email = request.Email,
+                RequiresAccount = false
+            });                           
+
+            _logger.LogInformation("Customer created with ID: {CustomerId}", openpayCustomer.Id);
+
+            // Update the customer entity with the Openpay customer ID
+            var customerEntity = _mapper.Map<Domain.Entities.Customer>(request);
+            customerEntity.OpenpayCustomerId = openpayCustomer.Id;
+            _context.Customers.Add(customerEntity);
+            await _context.SaveChangesAsync();
+
+            return openpayCustomer;
         }
     }
 }

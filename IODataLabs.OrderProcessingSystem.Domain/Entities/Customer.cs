@@ -13,6 +13,7 @@ namespace IODataLabs.OrderProcessingSystem.Domain.Entities
         public int CustomerId { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
+        public string? OpenpayCustomerId { get; set; }
 
         public List<Order> Orders { get; set; } = new List<Order>();
     }

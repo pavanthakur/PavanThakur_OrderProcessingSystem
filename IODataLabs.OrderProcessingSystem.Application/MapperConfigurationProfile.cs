@@ -8,6 +8,10 @@ namespace IODataLabs.OrderProcessingSystem.Application
     {
         public MapperConfigurationProfile()
         {
+            CreateMap<CustomerWithCardPaymentRequestDto, Customer>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+
             CreateMap<CreateCustomerRequestDto, Customer>();
             CreateMap<UpdateCustomerRequestDto, Customer>();
             CreateMap<Customer, CustomerDto>().ForMember(dest => dest.OrderDtos, opt => opt.MapFrom(src => src.Orders));
