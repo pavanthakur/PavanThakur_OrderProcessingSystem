@@ -25,7 +25,7 @@ namespace IODataLabs.OrderProcessingSystem.API.Controllers
         /// </summary>
         /// <param name="request">CustomerWithCardPaymentRequestDto</param>
         /// <returns>Payment status</returns>
-        [HttpPost]
+        [HttpPost("ProcessPayment")]
         public async Task<IActionResult> ProcessPayment([FromBody] CustomerWithCardPaymentRequestDto request)
         {
             try

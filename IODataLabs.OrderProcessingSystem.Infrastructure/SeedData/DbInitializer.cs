@@ -15,6 +15,8 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure.SeedData
         {
             context.Database.EnsureCreated();  // Ensure the DB is created
 
+            SeedOpenpayProvider(context);
+
             // Check if the data already exists
             if (context.Customers.Any() || context.Products.Any() || context.Orders.Any() || context.OrderProducts.Any())
             {
@@ -31,7 +33,6 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure.SeedData
 
         private static void SeedCustomers(OrderProcessingSystemDbContext context)
         {
-            // The rest of the file remains unchanged
             var faker = new Faker<Customer>()
                 .RuleFor(c => c.Name, f => f.Name.FullName())
                 .RuleFor(c => c.Email, f => f.Internet.Email());
@@ -79,6 +80,28 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure.SeedData
                     new OrderProduct { OrderId = orders[1].OrderId, ProductId = products[2].ProductId, Quantity = 1 }
                 };
             context.OrderProducts.AddRange(orderProducts);
+            context.SaveChanges();
+        }
+
+        private static void SeedOpenpayProvider(OrderProcessingSystemDbContext context)
+        {
+            // Check if providers already exist
+            if (context.PaymentProviders.Any())
+            {
+                return;
+            }
+
+            // Add OpenPay Provider
+            var openPayProvider = new PaymentProvider
+            {
+                Name = "OpenPay",
+                APIUrl = "https://sandbox-api.openpay.mx/v1",
+                IsActive = true,
+                IsProduction = false,
+                CreatedBy = 1,
+                CreatedDate = DateTime.UtcNow
+            };
+            context.PaymentProviders.Add(openPayProvider);
             context.SaveChanges();
         }
 

@@ -12,8 +12,5 @@ namespace IODataLabs.OpenPayAdapter.Configuration
         public string PrivateKey { get; set; } = string.Empty;
         public string DeviceSessionId { get; set; } = string.Empty;
         public bool IsProduction { get; set; }
-        public string ApiBaseUrl => IsProduction
-            ? "https://api.openpay.mx/v1"
-            : "https://sandbox-api.openpay.mx/v1";
     }
 }
