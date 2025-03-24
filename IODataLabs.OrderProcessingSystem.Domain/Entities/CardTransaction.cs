@@ -11,7 +11,7 @@ namespace IODataLabs.OrderProcessingSystem.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        public int CustomerId { get; set; } // Change type to int
+        public int CustomerId { get; set; }
 
         [Required]
         public string TransactionCustomerId { get; set; } = string.Empty;

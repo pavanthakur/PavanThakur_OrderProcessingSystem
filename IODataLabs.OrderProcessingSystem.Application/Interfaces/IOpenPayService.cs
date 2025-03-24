@@ -5,6 +5,6 @@ namespace IODataLabs.OrderProcessingSystem.Application.Interfaces
 {
     public interface IOpenPayService
     {
-        Task<Payment> ProcessPaymentAsync(CustomerWithCardPaymentRequestDto paymentRequestDto);
+        Task<PaymentDto> ProcessPaymentAsync(CustomerWithCardPaymentRequestDto paymentRequestDto);
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IODataLabs.OrderProcessingSystem.Domain.Entities
+namespace IODataLabs.OrderProcessingSystem.Application.DTO
 {
-    public class Payment : BaseAuditableCreateEntity
+    public class PaymentDto
     {
         public string Id { get; set; } = string.Empty;
         public string OrderId { get; set; } = string.Empty;

@@ -11,6 +11,8 @@ namespace IODataLabs.OrderProcessingSystem.Application.DTO
         // Customer Info
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string DeviceSessionId { get; set; } = string.Empty;
+
         //public string PhoneNumber { get; set; } = string.Empty;//todo: we can utilize later
 
         // Card Info

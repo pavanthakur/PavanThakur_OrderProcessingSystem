@@ -21,11 +21,11 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         private readonly IOpenPayAdapterService _openPayAdapterService;
         private readonly ILogger<OpenPayService> _logger;
         private readonly string _redirectUrl;
-        private readonly string _deviceSessionId;
         private readonly OrderProcessingSystemDbContext _context;
         private readonly IMapper _mapper;
         private readonly AppMasterData _appMasterData;
         private readonly PaymentProvider _openPayProvider;
+        private readonly IConfiguration _configuration;
 
         public OpenPayService(
             IOpenPayAdapterService openPayAdapterService,
@@ -37,8 +37,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
         {
             _openPayAdapterService = openPayAdapterService;
             _logger = logger;
-            _deviceSessionId = configuration["OpenPay:DeviceSessionId"]
-                ?? throw new InvalidOperationException("DeviceSessionId is not configured");
+            _configuration = configuration;
             _redirectUrl = configuration["OpenPay:RedirectUrl"]
                 ?? throw new InvalidOperationException("RedirectUrl is not configured");
             _context = context;
@@ -50,11 +49,17 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 ?? throw new InvalidOperationException("OpenPay provider not found in master data");
         }
 
-        public async Task<Payment> ProcessPaymentAsync(CustomerWithCardPaymentRequestDto request)
+        public async Task<PaymentDto> ProcessPaymentAsync(CustomerWithCardPaymentRequestDto request)
         {
             try
             {
                 _logger.LogInformation("Starting combined customer, card, and payment process");
+
+                var deviceSessionId = _configuration["OpenPay:DeviceSessionId"];
+
+                request.DeviceSessionId = string.IsNullOrWhiteSpace(request.DeviceSessionId) ?
+                    deviceSessionId ?? throw new InvalidOperationException("DeviceSessionId is not configured") : request.DeviceSessionId;
+
                 // Create paymentMethod
                 var paymentMethod = await CreatePaymentMethodAndGetPaymentMethodIdAsync();
 
@@ -70,7 +75,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                 // Create charge request
                 var charge = await CreateChargeAsync(request, openpayCustomer, createdCard.Id, paymentMethod, billingCustomerId);
 
-                return new Payment
+                return new PaymentDto
                 {
                     Id = charge.Id,
                     OrderId = request.OrderId,
@@ -221,7 +226,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                     ExpirationYear = request.ExpirationYear,
                     ExpirationMonth = request.ExpirationMonth,
                     Cvv2 = request.Cvv2,
-                    DeviceSessionId = _deviceSessionId
+                    DeviceSessionId = request.DeviceSessionId
                 };
 
                 var createdCard = await _openPayAdapterService.CreateCardTokenAsync(card);
@@ -294,7 +299,7 @@ namespace IODataLabs.OrderProcessingSystem.Application.Services
                     Amount = new Decimal(100.00),//request.Amount,
                     Currency = AppMasterConstant.DefaultCurrencyCode,//request.Currency,
                     Description = $"Order: {request.OrderId}",
-                    DeviceSessionId = _deviceSessionId,
+                    DeviceSessionId = request.DeviceSessionId,
                     OrderId = request.OrderId,
                     Use3DSecure = true,
                     RedirectUrl = _redirectUrl,
