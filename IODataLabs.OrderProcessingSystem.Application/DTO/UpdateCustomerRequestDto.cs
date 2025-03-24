@@ -10,9 +10,9 @@ namespace IODataLabs.OrderProcessingSystem.Application.DTO
     public class UpdateCustomerRequestDto
     {
         [Required]
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [Required]
-        public required string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
     }
 
 }

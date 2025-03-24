@@ -4,6 +4,7 @@ using IODataLabs.OrderProcessingSystem.Application;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
+using Microsoft.Extensions.Hosting; // Add this using directive
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.InjectApplicationDependencies(); 
+builder.InjectApplicationDependencies();
+
 builder.Services.AddControllers();
 
 // Register Swagger services

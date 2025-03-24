@@ -10,12 +10,14 @@ using IODataLabs.OrderProcessingSystem.Application.Services;
 using IODataLabs.OpenPayAdapter;
 using IODataLabs.OrderProcessingSystem.Infrastructure.DataContext;
 using IODataLabs.OrderProcessingSystem.Application.Utilities;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IODataLabs.OrderProcessingSystem.Application
 {
-    public static class StartupHelper
+    public static class WebApplicationBuilderExtensions
     {
-        public static void InjectApplicationDependencies(this IHostApplicationBuilder builder)
+        public static WebApplicationBuilder InjectApplicationDependencies(this WebApplicationBuilder builder)
         {
             // Use the correct extension method for adding validators
             builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -40,6 +42,9 @@ namespace IODataLabs.OrderProcessingSystem.Application
 
             //Finally InjectInfrastructureDependencies
             builder.InjectInfrastructureDependencies();
+
+            // Return the builder to fix the CS0161 error
+            return builder;
         }
     }
 }

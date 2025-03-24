@@ -3,18 +3,13 @@ using IODataLabs.OrderProcessingSystem.Infrastructure.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 
 namespace IODataLabs.OrderProcessingSystem.Infrastructure
 {
     public static class StartupHelper
     {
-        public static void InjectInfrastructureDependencies(this IHostApplicationBuilder builder)
+        public static WebApplicationBuilder InjectInfrastructureDependencies(this WebApplicationBuilder builder)
         {
             builder.Services.AddDbContext<OrderProcessingSystemDbContext>(options =>
             {
@@ -35,6 +30,8 @@ namespace IODataLabs.OrderProcessingSystem.Infrastructure
                 dbContext.Database.Migrate();
                 DbInitializer.Initialize(dbContext);
             }
+
+            return builder; // Ensure the method returns a value
         }
     }
 }

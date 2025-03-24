@@ -1,5 +1,4 @@
 using AutoMapper;
-using Azure.Core;
 using IODataLabs.OpenPayAdapter;
 using IODataLabs.OrderProcessingSystem.Application.DTO;
 using IODataLabs.OrderProcessingSystem.Application.Interfaces;

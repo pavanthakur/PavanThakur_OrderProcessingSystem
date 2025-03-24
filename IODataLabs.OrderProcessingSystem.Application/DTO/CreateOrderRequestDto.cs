@@ -19,6 +19,6 @@ namespace IODataLabs.OrderProcessingSystem.Application.DTO
         /// <summary>
         /// Gets or sets the list of product IDs.
         /// </summary>
-        public required List<int> ProductIds { get; set; }
+        public List<int> ProductIds { get; set; } = new List<int>();
     }
 }
